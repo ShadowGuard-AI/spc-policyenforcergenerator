@@ -1,13 +1,18 @@
 # spc-PolicyEnforcerGenerator
-A script to generate basic, executable enforcement scripts (e.g., bash, Python) from a high-level policy document. It parses the policy document (e.g., using `pyyaml`), identifies key rules and translates them into executable commands to verify configurations and enforce compliance. Dependencies might include `pyyaml` and templating libraries like `Jinja2`. - Focused on Tools for automatically validating system configurations (e.g., security headers, password policies, firewall rules) against predefined security policies defined in YAML or JSON format. These tools help ensure adherence to security best practices and internal standards.
+A script to generate basic enforcement scripts (bash or Python) from a high-level policy document. It parses the policy document using PyYAML or the JSON standard library, identifies key rules, and translates them into commands to verify configurations and enforce compliance. Scripts are built by string construction in the code; no templating library is used.
+
+Each rule value must be a mapping whose values are strings, with at least one `check` or `enforce` value. A policy with no rules, a rule with no check or enforce value, or a rule that is not a mapping is a validation error: the tool exits non-zero and writes no script.
+
+In generated Python, check and enforce values are emitted with repr quoting, so operator text stays inside one string literal and cannot become extra statements. In generated bash, a description is a label: newlines in it are flattened so it stays on its comment line. The check and enforce values copied into bash are the commands the operator wrote, which is the documented purpose of a bash enforcement script. Generated scripts are written with mode 644 by default, not executable.
 
 ## Install
-`git clone https://github.com/ShadowGuardAI/spc-policyenforcergenerator`
+`git clone https://github.com/ShadowGuard-AI/spc-policyenforcergenerator`
 
 ## Usage
-`./spc-policyenforcergenerator [params]`
+`python3 main.py POLICY_FILE [-o OUTPUT_FILE] [-s bash|python] [-l LEVEL] [-v SCHEMA_FILE]`
 
 ## Parameters
+- `policy_file`: Path to the policy file (YAML or JSON).
 - `-h`: Show help message and exit
 - `--output_file`: Path to the output enforcement script.
 - `--script_type`: Type of script to generate.
