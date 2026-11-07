@@ -129,10 +129,10 @@ def generate_enforcement_script(policy, script_type):
             if 'description' in rule_details:
                 script += f"# {clean_label(rule_details['description'])}\n"
             if 'check' in rule_details:
-                script += f"# Checking: {rule_name}\n"
+                script += f"# Checking: {clean_label(rule_name)}\n"
                 script += f"{rule_details['check']}\n"
             if 'enforce' in rule_details:
-                 script += f"# Enforcing: {rule_name}\n"
+                 script += f"# Enforcing: {clean_label(rule_name)}\n"
                  script += f"{rule_details['enforce']}\n"
             script += "\n"
     elif script_type == 'python':
@@ -162,20 +162,20 @@ def generate_enforcement_script(policy, script_type):
             if 'description' in rule_details:
                 script += f"# {clean_label(rule_details['description'])}\n"
             if 'check' in rule_details:
-                script += f"# Checking: {rule_name}\n"
-                script += f"print(f'Checking {rule_name}')\n"
+                script += f"# Checking: {clean_label(rule_name)}\n"
+                script += f"print({'Checking ' + str(rule_name)!r})\n"
                 script += f"output, error = execute_command({rule_details['check']!r})\n"
                 script += f"if error:\n"
-                script += f"   print(f'Error checking {rule_name}: {{error}}')\n"
+                script += "   print(" + repr(f"Error checking {rule_name}: ") + " + str(error))\n"
                 script += f"else:\n"
                 script += f"   print(f'Check output: {{output}}')\n"
 
             if 'enforce' in rule_details:
-                script += f"# Enforcing: {rule_name}\n"
-                script += f"print(f'Enforcing {rule_name}')\n"
+                script += f"# Enforcing: {clean_label(rule_name)}\n"
+                script += f"print({'Enforcing ' + str(rule_name)!r})\n"
                 script += f"output, error = execute_command({rule_details['enforce']!r})\n"
                 script += f"if error:\n"
-                script += f"   print(f'Error enforcing {rule_name}: {{error}}')\n"
+                script += "   print(" + repr(f"Error enforcing {rule_name}: ") + " + str(error))\n"
                 script += f"else:\n"
                 script += f"   print(f'Enforcement output: {{output}}')\n"
 
